@@ -260,13 +260,17 @@ export async function readFromDisk(file: string): Promise<ArrayBuffer> {
 export async function downloadImage(url: string): Promise<ArrayBuffer> {
 
   logError("Downloading: " + url, false);
-  const headers = {
-    'method': 'GET',
-    'User-Agent': USER_AGENT
-  }
+  const parsedUrl = new URL(url);
 
   try {
-    const res = await requestUrl({ url: url, headers })
+    const res = await requestUrl({
+      url: url,
+      method: 'GET',
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Referer': parsedUrl.origin + '/'
+      }
+    })
     logError(res, true);
     return res.arrayBuffer;
   }
